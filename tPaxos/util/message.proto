@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package tPaxos;
+
+message PaxosMsg {
+	required uint32 GLType = 1;				// Group level message type
+	optional uint32 InstanceID = 2;			// Associate message instance id
+	optional uint32 NodeID = 3;				// Sender node id
+
+	optional uint32 ILType = 4;				// Instance level message type
+	optional uint32 ProposalID = 5;			// Prepare: Proposal id of this round; Accept: Proposal id which accept by majority; PrepareReply: 
+											//   corresponding prepare proposal id; 
+	optional bytes Value = 6;				// Accept: value; PrepareReply: last accept value; Learn: consensus result
+	optional uint32 AcceptedProposalID = 7;	// PrepareReply: last accept value's corresponding proposal id
+	optional uint32 AcceptedNodeID = 8;		// PrepareReply: last accept value's corresponding node id
+	optional bool Reject = 9;				// PrepareReply: Indicate if last prepare reject by this node; 
+	optional uint32 PromisedProposalID = 10;
+}

@@ -1,0 +1,18 @@
+1. Proposer: Prepare: <InstanceID, NodeID, ProposalID>
+   Acceptor: OnPrepare: Compare incoming proposal Ballot<NodeID, ProposalID> and last promised ballot,
+             if proposal ballot >= last promise ballot, reply with <LastAcceptNodeID, LastAcceptProposalID, LastAcceptValue>
+             and update local promise ballot. otherwise it will reply with <LastPromiseID>
+
+   Proposer: OnPrepareReply: if last prepare request is reject by acceptor, update counter and next proposal id.
+                             otherwise compare and receive acceptor's LastAccept value and ballot sequence.
+                             If last prepare request is accept by majority, entering next phase, otherwise reset 
+                             prepare timer.
+2. Proposer: Accept: <InstanceID, NodeID, ProposalID, Value>
+   Acceptor: OnAccept: if incomint message ballot<NodeID, ProposalID> >= promise ballot then update promise ballot and accept
+                       incoming value. otherwise send promised proposal id.
+   
+   Proposer: OnAcceptReply: if reject by acceptor then update proposal id.
+
+SyncDaemon 每轮查找一个Group，发送Probe消息，根据返回的ProbeReply确定其_uMinInstanceID，如果比自身的
+_uMinInstanceID来大则发送Lookup消息，对端Group直接返回GroupMsgPaxos.PaxosMsgTypeLearnValue来将该Group
+更新至当前状态
